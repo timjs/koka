@@ -11,7 +11,7 @@
    - syntax/var
    - syntax/with
    - handlers/basic
-   - named-handlers/basic
+   - handlers/named/ask
 */
 module heap
 
