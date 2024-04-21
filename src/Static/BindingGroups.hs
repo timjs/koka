@@ -337,47 +337,44 @@ group :: [UserDef] -> Deps -> [UserDefGroup]
 group defs deps
   = let -- get definition id's
         defVars  = S.fromList (M.keys deps)
+
         -- constrain to the current group of id's
         defDeps  = M.map (\fvs -> S.intersection defVars fvs) deps
-        -- determine strongly connected components
+
+        -- determine strongly connected components (`scc`)
         defDepsList = [(id,S.toList fvs) | (id,fvs) <- M.toList defDeps]
         defOrderScc = scc defDepsList
+
         -- create a map from definition id's to definitions.
         defMap      = M.fromListWith (\xs ys -> ys ++ xs) [(defName def,[def]) | def <- defs]
+
         -- try to maintain original source order as much as possible
         -- reorder the `defOrderScc` according to the (earliest) source line (of a recursive group)
-        -- without violating explicit dependencies.
+        -- without violating explicit dependencies. Regardless of the particular dependency order
+        -- returned by the `scc` algorithm (as dependency order is partial), this should always
+        -- result in the same canonical order (essentially making the ordering total using source lines
+        -- as a tie breaker). This is important since at this point in the compilation we cannot
+        -- yet resolve names fully:
+        -- 1. We may overestimate dependencies: a name like `foo` may refer to a locally qualified
+        --    name `int/foo` or `bool/foo` and we don't know until type checking and assume
+        --    it might refer to either one.
+        -- 2. We may not see all dependencies: implicit parameters are resolved at type checking
+        --    and may introduce dependencies that we cannot determine yet. As a programmer, we
+        --    can ensure the correct order by putting such implicit dependencies first in the source.
         lineOf ids  = let getLine id = map (posLine . rangeStart . getRange) (M.find id defMap)
                       in case concatMap getLine ids of
                            []    -> 0
                            lines -> minimum lines
-        defOrder    = reverse $ foldl insert [] defOrderScc
+        defOrder    = reverse $ foldl insert [] defOrderScc -- in dependency order (from least to most)
                     where
                       insert :: [[Name]] -> [Name] -> [[Name]]
-                      insert rdefs ids
-                        = let n       = lineOf ids
-                              iddeps  = S.unions (map (\id -> M.find id defDeps) ids)
-                              after x = (lineOf x > n) && not (any (\id -> S.member id iddeps) x)
-                          in case span after rdefs of
-                               (pre,post) -> pre ++ (ids : post)
-        {-
-        defOrderOld = let (xs,ys) = partition noDeps defOrder  -- no dependencies first
-                          noDeps ids = case ids of
-                                        [id] -> isEarlyBindName id || S.null (M.find id defDeps)
-                                        _    -> False
-                          isHidden ids = case ids of
-                                          [id] -> isHiddenName id
-                                          _ -> False
-                          partitionx f xs  = let (ys,zs) = partition f xs in (ys ++zs)
-                          {-
-                          (xxs,xys) = partition isHidden xs    -- and hidden names first inside those
-                                                              -- and "instances"  (`eq_int`) first inside those
-                          isprefix ids     = case ids of
-                                              [id] -> '_' `elem` (tail (nameId id))
-                                              _    -> False
-                          -}
-                      in (partitionx isHidden xs ++ ys)
-        -}
+                      insert rdefs idgrp
+                        = let n           = lineOf idgrp
+                              idgrpDeps   = S.unions (map (\id -> M.find id defDeps) idgrp)
+                              goesAfter x = (n < lineOf x) && not (any (\id -> S.member id idgrpDeps) x)
+                          in case span goesAfter rdefs of
+                               (pre,post) -> pre ++ (idgrp : post)
+
         -- create a definition group from a list of mutual recursive identifiers.
         makeGroup ids  = case ids of
                            [id] -> if S.member id (M.find id defDeps)
