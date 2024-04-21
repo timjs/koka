@@ -461,10 +461,10 @@ uint64_t kk_bits_xpermn64(uint64_t x, uint64_t indices) {
 #if !KK_BITS_HAS_FAST_ZIP32
 // scatter bits to even positions
 static inline uint32_t kk_bits_scatter_even32( uint32_t x ) {
-  x = (x ^ (x << 8 )) & KK_U32(0x00FF00FF);
-  x = (x ^ (x << 4 )) & kk_mask_even_nibbles32;
-  x = (x ^ (x << 2 )) & kk_mask_even_pairs32;
-  x = (x ^ (x << 1 )) & kk_mask_even_bits32;
+  x = (x | (x << 8 )) & KK_U32(0x00FF00FF);
+  x = (x | (x << 4 )) & kk_mask_even_nibbles32;
+  x = (x | (x << 2 )) & kk_mask_even_pairs32;
+  x = (x | (x << 1 )) & kk_mask_even_bits32;
   return x;
 }
 
@@ -477,10 +477,10 @@ uint32_t kk_bits_zip32(uint32_t x) {
 // gather even bits
 static inline uint32_t kk_bits_gather_even32(uint32_t x) {
   x = x & kk_mask_even_bits32;
-  x = (x ^ (x >> 1 )) & kk_mask_even_pairs32;
-  x = (x ^ (x >> 2 )) & kk_mask_even_nibbles32;
-  x = (x ^ (x >> 4 )) & KK_U32(0x00FF00FF);
-  x = (x ^ (x >> 8 )) & KK_U32(0x0000FFFF);
+  x = (x | (x >> 1 )) & kk_mask_even_pairs32;
+  x = (x | (x >> 2 )) & kk_mask_even_nibbles32;
+  x = (x | (x >> 4 )) & KK_U32(0x00FF00FF);
+  x = (x | (x >> 8 )) & KK_U32(0x0000FFFF);
   return x;
 }
 
@@ -491,11 +491,11 @@ uint32_t kk_bits_unzip32(uint32_t x) {
 
 #if !KK_BITS_HAS_FAST_ZIP64
 static inline uint64_t kk_bits_scatter_even64( uint64_t x ) {
-  x = (x ^ (x << 16)) & KK_U64(0x0000FFFF0000FFFF);
-  x = (x ^ (x << 8 )) & KK_U64(0x00FF00FF00FF00FF);
-  x = (x ^ (x << 4 )) & kk_mask_even_nibbles64;
-  x = (x ^ (x << 2 )) & kk_mask_even_pairs64;
-  x = (x ^ (x << 1 )) & kk_mask_even_bits64;
+  x = (x | (x << 16)) & KK_U64(0x0000FFFF0000FFFF);
+  x = (x | (x << 8 )) & KK_U64(0x00FF00FF00FF00FF);
+  x = (x | (x << 4 )) & kk_mask_even_nibbles64;
+  x = (x | (x << 2 )) & kk_mask_even_pairs64;
+  x = (x | (x << 1 )) & kk_mask_even_bits64;
   return x;
 }
 uint64_t kk_bits_zip64(uint64_t x) {
@@ -506,11 +506,11 @@ uint64_t kk_bits_zip64(uint64_t x) {
 #if !KK_BITS_HAS_FAST_UNZIP64
 static inline uint64_t kk_bits_gather_even64(uint64_t x) {
   x = x & kk_mask_even_bits64;
-  x = (x ^ (x >> 1 )) & kk_mask_even_pairs64;
-  x = (x ^ (x >> 2 )) & kk_mask_even_nibbles64;
-  x = (x ^ (x >> 4 )) & KK_U64(0x00FF00FF00FF00FF);
-  x = (x ^ (x >> 8 )) & KK_U64(0x0000FFFF0000FFFF);
-  x = (x ^ (x >> 16)) & KK_U64(0x00000000FFFFFFFF);
+  x = (x | (x >> 1 )) & kk_mask_even_pairs64;
+  x = (x | (x >> 2 )) & kk_mask_even_nibbles64;
+  x = (x | (x >> 4 )) & KK_U64(0x00FF00FF00FF00FF);
+  x = (x | (x >> 8 )) & KK_U64(0x0000FFFF0000FFFF);
+  x = (x | (x >> 16)) & KK_U64(0x00000000FFFFFFFF);
   return x;
 }
 uint64_t kk_bits_unzip64(uint64_t x) {
