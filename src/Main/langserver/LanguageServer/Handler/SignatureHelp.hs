@@ -100,7 +100,7 @@ createSignatureHelp pos sig modname vf filePath lexemes
           sigInfos <- concat <$> mapM (getSignatureInformation penv) results
           let mbIndex = findIndex (\(n, si) -> Just n == completionName) sigInfos
           -- trace ("Signature help for " ++ show completionName) $ return ()
-          return $! Just $! J.SignatureHelp (map snd sigInfos) (fmap fromIntegral mbIndex) (Just 0)
+          return $! Just $! J.SignatureHelp (map snd sigInfos) (fmap fromIntegral mbIndex) Nothing
 
 getSignatureInformation :: Env -> (Name,NameInfo) -> LSM [(Name, J.SignatureInformation)]
 getSignatureInformation penv (n, ninfo)
