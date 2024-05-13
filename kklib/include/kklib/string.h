@@ -122,7 +122,7 @@ static inline kk_string_t kk_string_empty() {
   static struct { struct kk_bytes_s _base; size_t length; char str[len+1]; } _static_##name = \
     { { { KK_HEADER_STATIC(0,KK_TAG_STRING) } }, len, chars }; \
   decl kk_string_t name = { { (intptr_t)&_static_##name._base._block } };
-  
+
 
 #else
 
@@ -484,6 +484,9 @@ kk_decl_export kk_string_t  kk_string_to_upper(kk_string_t str, kk_context_t* ct
 kk_decl_export kk_string_t  kk_string_to_lower(kk_string_t strs, kk_context_t* ctx);
 kk_decl_export kk_string_t  kk_string_trim_left(kk_string_t strs, kk_context_t* ctx);
 kk_decl_export kk_string_t  kk_string_trim_right(kk_string_t strs, kk_context_t* ctx);
+
+kk_decl_export kk_string_t  kk_string_join(kk_vector_t v, kk_context_t* ctx);
+kk_decl_export kk_string_t  kk_string_join_with(kk_vector_t v, kk_string_t sep, kk_context_t* ctx);
 
 kk_decl_export kk_unit_t   kk_println(kk_string_t s, kk_context_t* ctx);
 kk_decl_export kk_unit_t   kk_print(kk_string_t s, kk_context_t* ctx);

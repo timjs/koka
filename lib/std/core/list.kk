@@ -16,6 +16,7 @@ import std/core/exn
 import std/core/char
 import std/core/string
 import std/core/int
+import std/core/vector
 
 
 // Return the head of list if the list is not empty.
@@ -412,17 +413,19 @@ pub fun intersperse( xs : list<a>, sep : a ) : list<a>
 
 // Concatenate all strings in a list
 fun joinsep( xs : list<string>, sep : string ) : string
-  fun join-acc( ys : list<string>, acc : string ) : string
-    match ys
-      Cons(y,yy) -> join-acc(yy, acc ++ sep ++ y)  // todo: use string builder
-      Nil -> acc
   match xs
-    Nil -> ""
-    Cons(x,xx) -> join-acc(xx,x)
+    Nil                 -> ""
+    Cons(x,Nil)         -> x
+    Cons(x,Cons(y,Nil)) | sep.is-empty -> x ++ y
+    _                   -> xs.vector.join(sep)
 
 // Concatenate all strings in a list
 pub fun join( xs : list<string> ) : string
-  xs.joinsep("")
+  match xs
+    Nil                 -> ""
+    Cons(x,Nil)         -> x
+    Cons(x,Cons(y,Nil)) -> x ++ y
+    _                   -> xs.vector.join()
 
 // Concatenate all strings in a list using a specific separator
 pub fun joinsep/join( xs : list<string>, sep : string ) : string
@@ -430,7 +433,7 @@ pub fun joinsep/join( xs : list<string>, sep : string ) : string
 
 // Concatenate all strings in a list in reverse order
 pub fun reverse-join( xs : list<string> ) : string
-  xs.reverse.joinsep("")
+  xs.reverse.join
 
 // Append `end` to each string in the list `xs` and join them all together.\
 // `join-end([],end) === ""`\
