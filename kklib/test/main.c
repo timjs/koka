@@ -12,7 +12,6 @@
 #include <math.h>
 #include <limits.h>
 #include <float.h>
-#include <inttypes.h>
 
 #pragma GCC diagnostic ignored "-Wunused-function"
 #pragma GCC diagnostic ignored "-Woverlength-strings"
@@ -441,7 +440,7 @@ static void test_double(kk_context_t* ctx) {
 static void test_count10_64(uint64_t u) {
   uint8_t c = kk_bits_digits64(u);
   char buf[64];
-  snprintf(buf, 63, "%" PRIu64, u);
+  snprintf(buf, 63, "%" PRIuI64, u);
   if (strlen(buf) != c) {
     printf("*************\nvalue: %s: is not %i digits!!!\n************\n", buf, c);
   }
@@ -453,7 +452,7 @@ static void test_count10_64(uint64_t u) {
 static bool test_count10_32(uint32_t u) {
   uint8_t c = kk_bits_digits32(u);
   char buf[64];
-  snprintf(buf, 63, "%" PRIu32, u);
+  snprintf(buf, 63, "%" PRIuI32, u);
   if (strlen(buf) != c) {
     printf("*************\nvalue: %s: is not %i digits!!!\n************\n", buf, c);
     return false;
@@ -525,7 +524,7 @@ static void test_mul64(kk_context_t* ctx) {
     if (i % 100000 == 0) printf(".");
   }
   printf("ok.\n");
-}  
+}
 */
 
 static void test_count10(kk_context_t* ctx) {
@@ -662,7 +661,7 @@ static kk_ddouble_t kk_dd_from_duration(kk_duration_t d) {
       double secs = 0;
       if ((int32_t)secs == d.seconds) {
         secs = (double)d.seconds;
-      } 
+      }
       else {
         double sign = (d.seconds < 0 ? -1.0 : 1.0);
         int64_t s = (d.seconds < 0 ? -d.seconds : d.seconds);
@@ -676,8 +675,8 @@ static kk_ddouble_t kk_dd_from_duration(kk_duration_t d) {
     }
   }
 
-  if kk_likely((d.attoseconds % 1000) == 0 &&  // 1e-15 precision fits in 52 bits 
-               d.seconds >= KK_INT52_MIN && d.seconds < KK_INT52_MAX) 
+  if kk_likely((d.attoseconds % 1000) == 0 &&  // 1e-15 precision fits in 52 bits
+               d.seconds >= KK_INT52_MIN && d.seconds < KK_INT52_MAX)
   {
     // fast path when both components can be converted directly with full precision
     kk_ddouble_t dd;
@@ -712,7 +711,7 @@ void test_duration1(void) {
     d.seconds += 1;
     d.attoseconds = KK_I64(1000000000);
     kk_duration_to_ddouble(d, NULL, NULL);
-  }  
+  }
 }
 
 int main() {
@@ -734,12 +733,12 @@ int main() {
   test_pow10(ctx);
   test_double(ctx);
   test_ovf(ctx);
-  
+
   test_count10(ctx);
   test_bitcount();
-  
+
   //test_popcount();
-  
+
   //test_random(ctx);
   //test_duration1();
 
@@ -747,7 +746,7 @@ int main() {
   //test_pext64();
   //test_mul64(ctx);
 
-  
+
   /*
   init_nums();
   for (int i = 100; i < 800; i+=50) {

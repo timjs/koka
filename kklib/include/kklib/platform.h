@@ -394,6 +394,28 @@ static inline size_t kk_to_size_t(kk_ssize_t sz) {
 #endif
 
 
+// `inttypes.h` is not always available; define print formatting ourselves
+#if (LONG_MAX >= INT64_MAX)
+#define PRIdI64        "ld"
+#define PRIuI64        "lu"
+#define PRIxI64        "lx"
+#define PRIXI64        "lX"
+#define PRIdI32        "d"
+#define PRIuI32        "u"
+#define PRIxI32        "x"
+#define PRIXI32        "X"
+#else
+#define PRIdI64        "lld"
+#define PRIuI64        "llu"
+#define PRIxI64        "llx"
+#define PRIXI64        "llX"
+#define PRIdI32        "ld"
+#define PRIuI32        "lu"
+#define PRIxI32        "lx"
+#define PRIXI32        "lX"
+#endif
+
+
 // We define `kk_intx_t` as an integer with the natural (fast) machine register size.
 // We define it such that `sizeof(kk_intx_t)` is, with `m = max(sizeof(long),sizeof(size_t))`
 //   (m==8 || x32) ? 8 : ((m == 4 && sizeof(int) > 2)  ? 4 : sizeof(int))
@@ -407,10 +429,10 @@ typedef uint64_t       kk_uintx_t;
 #define KK_INTX_MAX    INT64_MAX
 #define KK_INTX_MIN    INT64_MIN
 #define KK_UINTX_MAX   UINT64_MAX
-#define PRIdIX         PRId64
-#define PRIuUX         PRIu64
-#define PRIxUX         PRIx64
-#define PRIXUX         PRIX64
+#define PRIdIX         PRIdI64
+#define PRIuUX         PRIuI64
+#define PRIxUX         PRIxI64
+#define PRIXUX         PRIXI64
 #elif (INT_MAX > INT16_MAX && LONG_MAX == INT32_MAX) || (SIZE_MAX == UINT32_MAX)
 typedef int32_t        kk_intx_t;
 typedef uint32_t       kk_uintx_t;
@@ -420,10 +442,10 @@ typedef uint32_t       kk_uintx_t;
 #define KK_INTX_MAX    INT32_MAX
 #define KK_INTX_MIN    INT32_MIN
 #define KK_UINTX_MAX   UINT32_MAX
-#define PRIdIX         PRId32
-#define PRIuUX         PRIu32
-#define PRIxUX         PRIx32
-#define PRIXUX         PRIX32
+#define PRIdIX         PRIdI32
+#define PRIuUX         PRIuI32
+#define PRIxUX         PRIxI32
+#define PRIXUX         PRIXI32
 #elif (INT_MAX == INT16_MAX)
 typedef int            kk_intx_t;
 typedef unsigned       kk_uintx_t;
