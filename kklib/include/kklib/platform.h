@@ -156,6 +156,7 @@
 #elif defined(__arm__) || defined(_ARM) || defined(_M_ARM)  || defined(_M_ARMT) || defined(__arm)
   #define KK_ARCH_ARM32     1
 #elif defined(__riscv) || defined(_M_RISCV)
+  #define KK_ARCH_RISCV     1
   #if (LONG_MAX == INT32_MAX)
   #define KK_ARCH_RISCV32   1
   #else
