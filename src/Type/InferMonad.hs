@@ -91,7 +91,7 @@ import Common.Unique
 import Common.Failure
 import Common.Error
 import Common.Syntax( Visibility(..))
-import Common.File(endsWith,normalizeWith)
+import Common.File(endsWith,normalizeWith, seqqList)
 import Common.Name
 import Common.NamePrim(nameTpVoid,nameTpPure,nameTpIO,nameTpST,nameTpAsyncX,
                        nameTpRead,nameTpWrite,namePredHeapDiv,nameReturn,
@@ -2094,4 +2094,4 @@ ppNameType penv (name,tp)
   = Pretty.ppName penv name <+> colon <+> Pretty.ppType penv tp
 
 concatMapM :: Monad m => (a -> m [b]) -> [a] -> m [b]
-concatMapM f xs = concat <$> mapM f xs
+concatMapM f xs = seqqList . concat <$> mapM f xs
