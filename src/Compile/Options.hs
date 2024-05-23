@@ -845,8 +845,11 @@ getKokaBuildDir "" eval
       then do exist <- doesDirectoryExist kkbuild
               if (exist)
                 then return kkbuild
-                else do tmp <- getTemporaryDirectory
-                        return (joinPath tmp kkbuild)
+                else do -- avoid the tmp directory as it does not always have execute permissions
+                        -- tmp <- getTemporaryDirectory
+                        -- instead use `$HOME/.koka` if in the interpreter
+                        home <- getHomeDirectory
+                        return (joinPath home kkbuild)
       else return kkbuild
 getKokaBuildDir buildDir _ = return buildDir
 
