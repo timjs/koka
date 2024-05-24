@@ -1159,10 +1159,10 @@ ccGcc name opt platform path
 
 ccMsvc name opt platform path
   = CC name path ["-DWIN32","-nologo"]
-         [(DebugFull,words "-MDd -Zi -Od -RTC1" ++ arch),
-          (Debug,words "-MDd -Zi -O1" ++ arch),
+         [(DebugFull,words "-MDd -Zi -FS -Od -RTC1" ++ arch),
+          (Debug,words "-MDd -Zi -FS -O1" ++ arch),
           (Release,words "-MD -O2 -Ob2 -DNDEBUG" ++ arch),
-          (RelWithDebInfo,words "-MD -Zi -O2 -Ob2 -DNDEBUG" ++ arch)]
+          (RelWithDebInfo,words "-MD -Zi -FS -O2 -Ob2 -DNDEBUG" ++ arch)]
          ["-W3"]
          ["-EHs","-TP","-c"]   -- always compile as C++ on msvc (for atomics etc.)
          ["-link"]             -- , "/NODEFAULTLIB:msvcrt"]
