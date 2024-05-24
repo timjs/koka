@@ -396,7 +396,13 @@ static inline size_t kk_to_size_t(kk_ssize_t sz) {
 
 
 // `inttypes.h` is not always available; define print formatting ourselves
-#if (LONG_MAX < INT64_MAX) || (defined(LLONG_MAX) && LLONG_MAX == INT64_MAX)
+#if (LONG_MAX < INT64_MAX) || (defined(__APPLE__) && defined(KK_ARM64))
+#define KK_INT64_IS_LONG_LONG  1
+#else
+#define KK_INT64_IS_LONG       1
+#endif
+
+#if defined(KK_INT64_IS_LONG_LONG)
 #define PRIdI64        "lld"
 #define PRIuI64        "llu"
 #define PRIxI64        "llx"
