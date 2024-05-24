@@ -276,16 +276,16 @@
 #endif
 
 #ifdef _MSC_VER
-# define KK_I128(i)      (i##i128)
-# define KK_U128(i)      (i##ui128)
+# define KK_I128(i)     (i##i128)
+# define KK_U128(i)     (i##ui128)
 #else
-# define KK_I128(i)      (INT128_C(i))
-# define KK_U128(i)      (UINT128_C(i))
+# define KK_I128(i)     (INT128_C(i))
+# define KK_U128(i)     (UINT128_C(i))
 #endif
 
-#define KK_KiB        (1024)
-#define KK_MiB        (KK_I32(1024)*KK_KiB)
-#define KK_GiB        (KK_I32(1024)*KK_MiB)
+#define KK_KiB          (1024)
+#define KK_MiB          (KK_I32(1024)*KK_KiB)
+#define KK_GiB          (KK_I32(1024)*KK_MiB)
 
 
 // Define size of intptr_t
@@ -396,16 +396,7 @@ static inline size_t kk_to_size_t(kk_ssize_t sz) {
 
 
 // `inttypes.h` is not always available; define print formatting ourselves
-#if (LONG_MAX >= INT64_MAX)
-#define PRIdI64        "ld"
-#define PRIuI64        "lu"
-#define PRIxI64        "lx"
-#define PRIXI64        "lX"
-#define PRIdI32        "d"
-#define PRIuI32        "u"
-#define PRIxI32        "x"
-#define PRIXI32        "X"
-#else
+#if (LONG_MAX < INT64_MAX) || (defined(LLONG_MAX) && LLONG_MAX == INT64_MAX)
 #define PRIdI64        "lld"
 #define PRIuI64        "llu"
 #define PRIxI64        "llx"
@@ -414,6 +405,15 @@ static inline size_t kk_to_size_t(kk_ssize_t sz) {
 #define PRIuI32        "lu"
 #define PRIxI32        "lx"
 #define PRIXI32        "lX"
+#else
+#define PRIdI64        "ld"
+#define PRIuI64        "lu"
+#define PRIxI64        "lx"
+#define PRIXI64        "lX"
+#define PRIdI32        "d"
+#define PRIuI32        "u"
+#define PRIxI32        "x"
+#define PRIXI32        "X"
 #endif
 
 
